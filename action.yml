@@ -1,0 +1,20 @@
+name: ChangeLog generator
+description: Generate ChangeLog in markdown format
+author: Adriano dos Santos Fernandes
+inputs:
+  fix-version-label:
+    description: >
+      fix-version label.
+    required: true
+  token:
+    description: >
+      The token for authenticating against the GitHub API.
+    required: true
+  repository:
+    description: >
+      Repository to delete assets in format `owner/repo` (default current repository).
+    required: false
+    default: ''
+runs:
+  using: node16
+  main: dist/index.js

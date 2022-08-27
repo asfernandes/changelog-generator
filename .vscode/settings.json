@@ -1,0 +1,9 @@
+{
+  "files.exclude": {
+    "dist": true,
+    "lib": true,
+    "node_modules": true
+  },
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
+}
