@@ -12,9 +12,30 @@ inputs:
     required: true
   repository:
     description: >
-      Repository to delete assets in format `owner/repo` (default current repository).
+      Repository to inspect issues and pull requests in format `owner/repo` (default current repository).
     required: false
     default: ''
 runs:
-  using: node16
-  main: dist/index.js
+  using: composite
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Run ChangeLog generator
+      shell: sh
+      run: node $GITHUB_ACTION_PATH/dist/index.js
+      env:
+        FIX_VERSION_LABEL: ${{ inputs.fix-version-label }}
+        GITHUB_TOKEN: ${{ inputs.token }}
+        REPOSITORY: ${{ inputs.repository }}
+
+    - name: Upload changelogs
+      uses: actions/upload-artifact@v3
+      with:
+        name: changelogs
+        path: "changelog-generator-files/"

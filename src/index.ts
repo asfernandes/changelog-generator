@@ -1,10 +1,14 @@
 import * as github from "@actions/github";
 import * as core from '@actions/core'
 import { request } from '@octokit/request';
+import * as fs from "fs";
+import { env } from "process";
 
 
-const token: string = core.getInput('token');
-const fixVersionLabel: string = core.getInput('fix-version-label');
+const GEN_DIR = 'changelog-generator-files';
+
+const fixVersionLabel: string = env.FIX_VERSION_LABEL;
+const token: string = env.GITHUB_TOKEN;
 const repository = getRepository();
 
 const headers = {
@@ -13,7 +17,7 @@ const headers = {
 
 
 function getRepository(): { owner: string, repo: string } {
-	const repository = core.getInput("repository");
+	const repository = env.REPOSITORY;
 
 	if (repository) {
 		const repositoryParts = repository.split("/");
@@ -118,8 +122,9 @@ async function run() {
 		});
 	});
 
-	core.notice(outMarkdownText, { title: 'ChangeLog in Markdown' });
-	core.notice(outAsciiDocText, { title: 'ChangeLog in AsciiDoc' });
+	fs.mkdirSync(GEN_DIR);
+	fs.writeFileSync(`${GEN_DIR}/changelog.md`, outMarkdownText);
+	fs.writeFileSync(`${GEN_DIR}/changelog.adoc`, outAsciiDocText);
 
 	const warnings = allIssues
 		.filter(({ state, type }) => state != 'closed' || !types.includes(type));

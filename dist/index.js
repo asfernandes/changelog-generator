@@ -10234,6 +10234,14 @@ module.exports = require("path");
 
 /***/ }),
 
+/***/ 7282:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("process");
+
+/***/ }),
+
 /***/ 5477:
 /***/ ((module) => {
 
@@ -10338,14 +10346,17 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const github = __nccwpck_require__(5438);
 const core = __nccwpck_require__(2186);
 const request_1 = __nccwpck_require__(6234);
-const token = core.getInput('token');
-const fixVersionLabel = core.getInput('fix-version-label');
+const fs = __nccwpck_require__(7147);
+const process_1 = __nccwpck_require__(7282);
+const GEN_DIR = 'changelog-generator-files';
+const fixVersionLabel = process_1.env.FIX_VERSION_LABEL;
+const token = process_1.env.GITHUB_TOKEN;
 const repository = getRepository();
 const headers = {
     authorization: `token ${token}`
 };
 function getRepository() {
-    const repository = core.getInput("repository");
+    const repository = process_1.env.REPOSITORY;
     if (repository) {
         const repositoryParts = repository.split("/");
         return {
@@ -10419,8 +10430,9 @@ async function run() {
                     `'''\n\n`;
         });
     });
-    core.notice(outMarkdownText, { title: 'ChangeLog in Markdown' });
-    core.notice(outAsciiDocText, { title: 'ChangeLog in AsciiDoc' });
+    fs.mkdirSync(GEN_DIR);
+    fs.writeFileSync(`${GEN_DIR}/changelog.md`, outMarkdownText);
+    fs.writeFileSync(`${GEN_DIR}/changelog.adoc`, outAsciiDocText);
     const warnings = allIssues
         .filter(({ state, type }) => state != 'closed' || !types.includes(type));
     if (warnings.length) {
