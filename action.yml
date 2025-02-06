@@ -19,12 +19,12 @@ runs:
   using: composite
   steps:
     - name: Set up Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 22
 
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Run ChangeLog generator
       shell: sh
@@ -35,7 +35,7 @@ runs:
         REPOSITORY: ${{ inputs.repository }}
 
     - name: Upload changelogs
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: changelogs
         path: "changelog-generator-files/"
